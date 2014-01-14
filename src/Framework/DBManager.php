@@ -1,7 +1,7 @@
 <?php
   namespace Framework;
 
-  use Framework\pattern\Singleton as Singleton;
+  use Framework\Pattern\Singleton as Singleton;
 
   class DBManager extends Singleton
   {
@@ -10,7 +10,7 @@
 
     protected function initialize()
     {
-      require_once(__DIR__.'/config/database.php');
+      require_once('config/database.php');
       try {
           $this->dbh = new \PDO('mysql:host='.$settings['dbhost'].';dbname='.$settings['dbname'].';charset=UTF8',
            $settings['dbuser'], $settings['dbpass']);

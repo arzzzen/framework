@@ -1,33 +1,35 @@
 <?php
   namespace Framework;
+  use Framework\Pattern\Singleton as Singleton;
 
-  class Router
+  class Router extends Singleton
   {
     private $controller = 'Main';
     private $action     = 'index';
     protected $routes;
+    public $matches = [];
 
     public function getControllerClass()
     {
-      foreach ($this->routes as $route) {
-        if (Request::getInstance()->getParam('path') === $route['path'])
-          $this->controller = $route['controller'];
-      }
-      return '\\controller\\'.$this->controller.'Controller';
+      return "\\controller\\{$this->controller}Controller";
     }
 
     public function getAction()
     {
-      foreach ($this->routes as $route) {
-        if (Request::getInstance()->getParam('path') === $route['path'])
-          $this->action = $route['action'];
-      }
-      return $this->action.'Action';
+      return "{$this->action}Action";
     }
 
-    public function __construct()
+    public function initialize()
     {
       require_once('config/routing.php');
+      foreach ($this->routes as $route) {
+        if (preg_match($route['path'], Request::getInstance()->path, $matches)) {
+          $this->controller = $route['controller'];
+          $this->action = $route['action'];
+          if (!empty($matches))
+            $this->matches = $matches;
+        }
+      }
     }
   }
 ?>
